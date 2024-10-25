@@ -3,29 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Form</title>
+  <title>Samba-2</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div class="container">
-    <h1>Login to CodeAcademy</h1>
+    <header>
+      <nav>
+        <a href="/index.html">Home</a>
+        About Me
+      </nav>
 
-    <form action="#">
-      <label for="#">Email or Username</label>
-      <input type="text">
+      <h1 class="centered">
+        Mount Samba Share in Linux
+      </h1>
+      <p class="centered">Follow these simple steps to start using Samba</p>
+    </header>
+  
+    <ol class="distrotut">
+      <li class="numbered">
+        <h2>Manual mounting</h2>
+    
+        <p>
+          Using mount.cifs.
+        </p>
+    
+          <code>
+    mount --mkdir -t cifs //SERVER/sharename /mnt/mountpoint -o username=username,password=password,workgroup=workgroup,iocharset=utf8,uid=username,gid=group
+          </code><br>
+        
+        <p>E.g.</p>
+          <code>
+    sudo mount -t cifs //192.168.3.155/Public_Files /mnt/SMB_SHARES/Public/ -o uid=1000,gid=1000
+          </code>  
+          <br>
 
-      <label for="">Password</label>
-      <input type="password">
+          <code>
+    sudo mount -t cifs //192.168.3.155/Private_Files /mnt/SMB_SHARES/Private/ -o credentials=/home/yann/.smbcredentials,uid=1000,gid=1000
+          </code>
+          <hr>
+      </li>
 
-      <a href="#">I forgot my password</a>
+      <li class="numbered">
+        <h2>Mounting on boot</h2>
+    
+        <p>Edit:</p>
+          <code>
+    sudo nvim /etc/fstab
+          </code><br>
+          
+      
+        <p>Add:</p>
+          <code>
+    //192.168.3.155/Public_Files /mnt/SMB_SHARES/Public cifs _netdev,nofail,uid=1000,gid=1000,iocharset=utf8 0 0
+          </code><br>
 
-      <button>Log In</button>
-    </form>
+          <code>
+    //192.168.3.155/Private_Files /mnt/SMB_SHARES/Private/ -o credentials=~/.smbcredentials,_netdev,nofail,uid=1000,gid=1000,iocharset=utf8 0 0
+          </code><br>
+  
+          <p>OBS: Do not use spaces between the periods in the options: <br>
+          E.g. <strong>_netdev,nofail,uid=1000</p></strong>
+      
+          <ul>
+            <li>
+              <p>_netdev <br>
+                The _netdev option ensures systemd understands that the mount is network dependent and only order it after the network is online.</p>
+            </li>
 
-    <a href="#">Login with another account</a>
+            <li>
+              <p>nofail <br>
+                Devices that are listed and not present will result in an error unless the nofail option is used.</p>
+            </li>
+          </ul>
 
-    <a href="#">Not a member yet? Sign up free</a>
+          <p>Reload fstab:</p>
+          <code>
+            systemctl daemon-reload
+          </code><br>  
+        
+        <p>Test the mount:</p>
+        <code>
+          sudo mount -a
+        </code>  
+      </li>
+
+      <li class="numbered">
+        <h2>Useful information</h2>
+  
+        <p>  Find ID:</p>
+        <code>
+          id -u username
+        </code><br>  
+
+        <p>Find GID:</p>
+        <code>
+          id -g username
+        </code><br>
+
+        <p>Find all the groups a user belongs to:</p>
+        <code>
+          id -G username
+        </code><br>
+
+        <p>To see the UID and all groups associated with a user:</p>
+        <code>
+          id username
+        </code><br>
+
+        <p>Check for erros:</p>
+        <code>
+          sudo dmesg
+        </code><br>
+      </li>
+    </ol>
+    
+    
+    
   </div>
+  
 </body>
 </html>
